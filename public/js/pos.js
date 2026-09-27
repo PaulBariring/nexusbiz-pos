@@ -24,23 +24,19 @@
     const holdBtn = document.getElementById('cartHoldBtn');
     const clearBtn = document.getElementById('cartClearBtn');
 
-    // Payment Modal Elements
-    const paymentModalEl = document.getElementById('paymentModal');
-    const paymentModal = paymentModalEl ? new bootstrap.Modal(paymentModalEl) : null;
+    // Safe Bootstrap Modal Helper
+    function getModal(id) {
+        const el = typeof id === 'string' ? document.getElementById(id) : id;
+        if (!el || typeof bootstrap === 'undefined') return null;
+        return bootstrap.Modal.getInstance(el) || new bootstrap.Modal(el);
+    }
+
     const modalTotalDue = document.getElementById('modalTotalDue');
     const amountTenderedInput = document.getElementById('amountTendered');
     const changeDueEl = document.getElementById('changeDue');
     const confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
     const paymentMethodRadios = document.querySelectorAll('input[name="payment_method"]');
-
-    // Receipt Modal Elements
-    const receiptModalEl = document.getElementById('receiptModal');
-    const receiptModal = receiptModalEl ? new bootstrap.Modal(receiptModalEl) : null;
     const receiptContentEl = document.getElementById('receiptContent');
-
-    // Parked Orders Modal
-    const parkedModalEl = document.getElementById('parkedOrdersModal');
-    const parkedModal = parkedModalEl ? new bootstrap.Modal(parkedModalEl) : null;
 
     // Format helper
     function fmt(num) {
@@ -290,7 +286,7 @@
                 amount: isNaN(val) ? 0 : val
             };
 
-            const modal = bootstrap.Modal.getInstance(document.getElementById('discountModal'));
+            const modal = getModal('discountModal');
             if (modal) modal.hide();
             renderCart();
         });
@@ -379,7 +375,7 @@
                     cart = data.parked.items || [];
                     parkedId = id;
                     renderCart();
-                    if (parkedModal) parkedModal.hide();
+                    getModal('parkedOrdersModal')?.hide();
                     updateParkedCountBadge();
                     window.showToast('Order resumed into cart!', 'success');
                 }
@@ -423,7 +419,7 @@
             }
             updateChangeCalculation(totals.total);
 
-            if (paymentModal) paymentModal.show();
+            getModal('paymentModal')?.show();
         });
     }
 
@@ -502,7 +498,7 @@
                     confirmPaymentBtn.innerHTML = '<i class="bi bi-check2-circle me-1"></i> Complete & Print Receipt';
 
                     if (data.success && data.sale) {
-                        if (paymentModal) paymentModal.hide();
+                        getModal('paymentModal')?.hide();
                         renderReceiptModal(data.sale);
 
                         // Reset Cart
@@ -610,7 +606,7 @@
             </div>
         `;
 
-        if (receiptModal) receiptModal.show();
+        getModal('receiptModal')?.show();
     }
 
     // Print receipt
