@@ -1,0 +1,189 @@
+{
+  "business_settings": {
+    "id": "default",
+    "business_name": "Nexus Retail Store",
+    "tagline": "Quality Goods & Everyday Essentials",
+    "business_type": "retail",
+    "tax_id": "TAX-889922-PH",
+    "address": "123 Commerce Avenue, Business Hub, Suite 400",
+    "phone": "+1 (555) 019-2834",
+    "email": "support@nexusbiz.local",
+    "currency_symbol": "$",
+    "tax_name": "Sales Tax",
+    "tax_rate": 8.50,
+    "tax_inclusive": false,
+    "receipt_header": "Thank you for shopping at Nexus Store!",
+    "receipt_footer": "Items in original condition can be exchanged within 7 days with valid receipt.",
+    "dynamic_fields": ["Brand", "SKU/Model", "Supplier", "Warranty"]
+  },
+  "categories": [
+    {
+      "id": "cat_beverages",
+      "name": "Beverages & Drinks",
+      "color": "#0d6efd",
+      "icon": "bi-cup-straw",
+      "description": "Cold drinks, juices, soda, water"
+    },
+    {
+      "id": "cat_snacks",
+      "name": "Snacks & Bakery",
+      "color": "#198754",
+      "icon": "bi-basket",
+      "description": "Chips, cookies, bakery items"
+    },
+    {
+      "id": "cat_personal",
+      "name": "Personal Care",
+      "color": "#6f42c1",
+      "icon": "bi-heart",
+      "description": "Toiletries, skincare, hygiene"
+    },
+    {
+      "id": "cat_general",
+      "name": "General Merchandise",
+      "color": "#fd7e14",
+      "icon": "bi-box-seam",
+      "description": "Household items, stationeries, batteries"
+    }
+  ],
+  "products": [
+    {
+      "id": "prod_1",
+      "name": "Premium Arabica Coffee Beans (250g)",
+      "barcode": "890123450001",
+      "sku": "COF-ARA-250",
+      "category_id": "cat_beverages",
+      "cost_price": 4.50,
+      "selling_price": 8.99,
+      "stock_quantity": 45,
+      "min_stock_alert": 10,
+      "unit": "pcs",
+      "dynamic_attributes": {
+        "Brand": "Mountain Roast",
+        "SKU/Model": "MR-250G",
+        "Supplier": "Highland Roasters",
+        "Warranty": "N/A"
+      },
+      "is_active": true
+    },
+    {
+      "id": "prod_2",
+      "name": "Organic Green Tea Box (20 bags)",
+      "barcode": "890123450002",
+      "sku": "TEA-GRN-020",
+      "category_id": "cat_beverages",
+      "cost_price": 2.00,
+      "selling_price": 4.50,
+      "stock_quantity": 32,
+      "min_stock_alert": 8,
+      "unit": "pcs",
+      "dynamic_attributes": {
+        "Brand": "Zen Leaf",
+        "SKU/Model": "ZL-TEA-20",
+        "Supplier": "Nature Organics",
+        "Warranty": "N/A"
+      },
+      "is_active": true
+    },
+    {
+      "id": "prod_3",
+      "name": "Artisan Dark Chocolate Bar 70%",
+      "barcode": "890123450003",
+      "sku": "CHO-DRK-070",
+      "category_id": "cat_snacks",
+      "cost_price": 1.80,
+      "selling_price": 3.75,
+      "stock_quantity": 55,
+      "min_stock_alert": 15,
+      "unit": "pcs",
+      "dynamic_attributes": {
+        "Brand": "ChocoCraft",
+        "SKU/Model": "CC-70-100G",
+        "Supplier": "Swiss Delights",
+        "Warranty": "N/A"
+      },
+      "is_active": true
+    },
+    {
+      "id": "prod_4",
+      "name": "Sea Salt Roasted Almonds (150g)",
+      "barcode": "890123450004",
+      "sku": "NUT-ALM-150",
+      "category_id": "cat_snacks",
+      "cost_price": 2.20,
+      "selling_price": 5.25,
+      "stock_quantity": 18,
+      "min_stock_alert": 5,
+      "unit": "pcs",
+      "dynamic_attributes": {
+        "Brand": "CrunchNut",
+        "SKU/Model": "CN-ALM-150",
+        "Supplier": "NutriFoods",
+        "Warranty": "N/A"
+      },
+      "is_active": true
+    },
+    {
+      "id": "prod_5",
+      "name": "Hydrating Aloe Vera Hand Soap (250ml)",
+      "barcode": "890123450005",
+      "sku": "HYG-SOAP-250",
+      "category_id": "cat_personal",
+      "cost_price": 1.50,
+      "selling_price": 3.99,
+      "stock_quantity": 28,
+      "min_stock_alert": 6,
+      "unit": "pcs",
+      "dynamic_attributes": {
+        "Brand": "PureGlow",
+        "SKU/Model": "PG-SOAP-01",
+        "Supplier": "CareCorp",
+        "Warranty": "N/A"
+      },
+      "is_active": true
+    },
+    {
+      "id": "prod_6",
+      "name": "Heavy Duty AA Batteries (4 Pack)",
+      "barcode": "890123450006",
+      "sku": "BAT-AA-004",
+      "category_id": "cat_general",
+      "cost_price": 1.90,
+      "selling_price": 4.99,
+      "stock_quantity": 60,
+      "min_stock_alert": 10,
+      "unit": "pack",
+      "dynamic_attributes": {
+        "Brand": "VoltMax",
+        "SKU/Model": "VM-AA-4PK",
+        "Supplier": "PowerDistribution",
+        "Warranty": "1 Year"
+      },
+      "is_active": true
+    },
+    {
+      "id": "prod_7",
+      "name": "Microfiber Cleaning Cloth 3-Pack",
+      "barcode": "890123450007",
+      "sku": "CLO-MIC-003",
+      "category_id": "cat_general",
+      "cost_price": 1.20,
+      "selling_price": 3.49,
+      "stock_quantity": 3,
+      "min_stock_alert": 8,
+      "unit": "pack",
+      "dynamic_attributes": {
+        "Brand": "CleanPro",
+        "SKU/Model": "CP-MICRO-3",
+        "Supplier": "HomeCare Supplies",
+        "Warranty": "N/A"
+      },
+      "is_active": true
+    }
+  ],
+  "sales": [],
+  "shifts": [],
+  "cash_movements": [],
+  "stock_adjustments": [],
+  "parked_sales": []
+}

@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: nexusbiz-pos
+    runtime: docker
+    dockerfilePath: Dockerfile
+    plan: free
+    region: oregon
+    envVars:
+      - key: APP_NAME
+        value: "NexusBiz POS & Inventory"
+      - key: APP_ENV
+        value: production
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
