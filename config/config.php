@@ -22,8 +22,8 @@ return [
         'key' => getenv('SUPABASE_KEY') ?: '', // 'anon' or 'service_role' key
     ],
 
-    // Local Data Storage fallback directory
-    'storage_path' => __DIR__ . '/../data',
+    // Local Data Storage fallback directory (uses /tmp in serverless/Vercel)
+    'storage_path' => getenv('VERCEL') ? '/tmp' : __DIR__ . '/../data',
 
     // Defaults
     'default_currency' => '$',
