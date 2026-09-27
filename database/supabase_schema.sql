@@ -148,35 +148,33 @@ ALTER TABLE sale_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE stock_adjustments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE parked_sales ENABLE ROW LEVEL SECURITY;
 
-DO $$ BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public access business_settings') THEN
-        CREATE POLICY "Allow public access business_settings" ON business_settings FOR ALL USING (true);
-    END IF;
-    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public access categories') THEN
-        CREATE POLICY "Allow public access categories" ON categories FOR ALL USING (true);
-    END IF;
-    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public access products') THEN
-        CREATE POLICY "Allow public access products" ON products FOR ALL USING (true);
-    END IF;
-    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public access shifts') THEN
-        CREATE POLICY "Allow public access shifts" ON shifts FOR ALL USING (true);
-    END IF;
-    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public access cash_movements') THEN
-        CREATE POLICY "Allow public access cash_movements" ON cash_movements FOR ALL USING (true);
-    END IF;
-    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public access sales') THEN
-        CREATE POLICY "Allow public access sales" ON sales FOR ALL USING (true);
-    END IF;
-    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public access sale_items') THEN
-        CREATE POLICY "Allow public access sale_items" ON sale_items FOR ALL USING (true);
-    END IF;
-    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public access stock_adjustments') THEN
-        CREATE POLICY "Allow public access stock_adjustments" ON stock_adjustments FOR ALL USING (true);
-    END IF;
-    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public access parked_sales') THEN
-        CREATE POLICY "Allow public access parked_sales" ON parked_sales FOR ALL USING (true);
-    END IF;
-END $$;
+-- 10. Permissive RLS Policies for Anon / API Access
+DROP POLICY IF EXISTS "Allow public access business_settings" ON business_settings;
+CREATE POLICY "Allow public access business_settings" ON business_settings FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public access categories" ON categories;
+CREATE POLICY "Allow public access categories" ON categories FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public access products" ON products;
+CREATE POLICY "Allow public access products" ON products FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public access shifts" ON shifts;
+CREATE POLICY "Allow public access shifts" ON shifts FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public access cash_movements" ON cash_movements;
+CREATE POLICY "Allow public access cash_movements" ON cash_movements FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public access sales" ON sales;
+CREATE POLICY "Allow public access sales" ON sales FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public access sale_items" ON sale_items;
+CREATE POLICY "Allow public access sale_items" ON sale_items FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public access stock_adjustments" ON stock_adjustments;
+CREATE POLICY "Allow public access stock_adjustments" ON stock_adjustments FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public access parked_sales" ON parked_sales;
+CREATE POLICY "Allow public access parked_sales" ON parked_sales FOR ALL USING (true) WITH CHECK (true);
 
 -- Seed Initial Default Settings if empty
 INSERT INTO business_settings (id, business_name, tagline, business_type, tax_id, address, phone, currency_symbol, tax_rate, tax_inclusive)
