@@ -1,14 +1,17 @@
 -- ==============================================================================
 -- SUPABASE POSTGRESQL SCHEMA FOR NEXUSBIZ POS & INVENTORY
 -- Copy and paste this script directly into your Supabase Dashboard SQL Editor
+-- (Make sure NO text is selected before clicking "Run", or use a New Query tab)
 -- ==============================================================================
 
+SET search_path TO public;
+
 -- 1. Business Settings & Dynamic Configuration
-CREATE TABLE IF NOT EXISTS business_settings (
+CREATE TABLE IF NOT EXISTS public.business_settings (
     id VARCHAR(50) PRIMARY KEY DEFAULT 'default',
     business_name VARCHAR(150) NOT NULL DEFAULT 'Nexus Retail Store',
     tagline VARCHAR(255) DEFAULT 'Quality Goods & Everyday Essentials',
-    business_type VARCHAR(50) NOT NULL DEFAULT 'retail', -- retail, apparel, grocery, cafe, services
+    business_type VARCHAR(50) NOT NULL DEFAULT 'retail',
     tax_id VARCHAR(50) DEFAULT 'TAX-889922-PH',
     address TEXT DEFAULT '123 Commerce Avenue, Business Hub, Suite 400',
     phone VARCHAR(50) DEFAULT '+1 (555) 019-2834',
@@ -25,7 +28,7 @@ CREATE TABLE IF NOT EXISTS business_settings (
 );
 
 -- 2. Categories
-CREATE TABLE IF NOT EXISTS categories (
+CREATE TABLE IF NOT EXISTS public.categories (
     id VARCHAR(50) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     color VARCHAR(20) DEFAULT '#0d6efd',
@@ -35,12 +38,12 @@ CREATE TABLE IF NOT EXISTS categories (
 );
 
 -- 3. Products with Dynamic Attributes
-CREATE TABLE IF NOT EXISTS products (
+CREATE TABLE IF NOT EXISTS public.products (
     id VARCHAR(50) PRIMARY KEY,
     name VARCHAR(200) NOT NULL,
     barcode VARCHAR(100) UNIQUE,
     sku VARCHAR(100),
-    category_id VARCHAR(50) REFERENCES categories(id) ON DELETE SET NULL,
+    category_id VARCHAR(50) REFERENCES public.categories(id) ON DELETE SET NULL,
     cost_price NUMERIC(12, 2) DEFAULT 0.00,
     selling_price NUMERIC(12, 2) NOT NULL DEFAULT 0.00,
     stock_quantity INTEGER NOT NULL DEFAULT 0,
@@ -53,7 +56,7 @@ CREATE TABLE IF NOT EXISTS products (
 );
 
 -- 4. Shifts / Cash Drawer Management
-CREATE TABLE IF NOT EXISTS shifts (
+CREATE TABLE IF NOT EXISTS public.shifts (
     id VARCHAR(50) PRIMARY KEY,
     cashier_name VARCHAR(100) NOT NULL DEFAULT 'Main Cashier',
     starting_cash NUMERIC(12, 2) NOT NULL DEFAULT 100.00,
@@ -65,47 +68,47 @@ CREATE TABLE IF NOT EXISTS shifts (
     other_sales NUMERIC(12, 2) DEFAULT 0.00,
     cash_in NUMERIC(12, 2) DEFAULT 0.00,
     cash_out NUMERIC(12, 2) DEFAULT 0.00,
-    status VARCHAR(20) DEFAULT 'open', -- open, closed
+    status VARCHAR(20) DEFAULT 'open',
     notes TEXT,
     opened_at TIMESTAMPTZ DEFAULT NOW(),
     closed_at TIMESTAMPTZ
 );
 
 -- 5. Cash Drawer In/Out Movements
-CREATE TABLE IF NOT EXISTS cash_movements (
+CREATE TABLE IF NOT EXISTS public.cash_movements (
     id VARCHAR(50) PRIMARY KEY,
-    shift_id VARCHAR(50) REFERENCES shifts(id) ON DELETE CASCADE,
-    type VARCHAR(20) NOT NULL, -- 'in' or 'out'
+    shift_id VARCHAR(50) REFERENCES public.shifts(id) ON DELETE CASCADE,
+    type VARCHAR(20) NOT NULL,
     amount NUMERIC(12, 2) NOT NULL,
     reason TEXT NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- 6. Sales / Invoices
-CREATE TABLE IF NOT EXISTS sales (
+CREATE TABLE IF NOT EXISTS public.sales (
     id VARCHAR(50) PRIMARY KEY,
     invoice_number VARCHAR(50) UNIQUE NOT NULL,
-    shift_id VARCHAR(50) REFERENCES shifts(id) ON DELETE SET NULL,
+    shift_id VARCHAR(50) REFERENCES public.shifts(id) ON DELETE SET NULL,
     cashier_name VARCHAR(100) DEFAULT 'Main Cashier',
     customer_name VARCHAR(100) DEFAULT 'Walk-in Customer',
     subtotal NUMERIC(12, 2) NOT NULL DEFAULT 0.00,
     discount_amount NUMERIC(12, 2) DEFAULT 0.00,
-    discount_type VARCHAR(20) DEFAULT 'flat', -- flat, percent
+    discount_type VARCHAR(20) DEFAULT 'flat',
     tax_amount NUMERIC(12, 2) DEFAULT 0.00,
     total_amount NUMERIC(12, 2) NOT NULL DEFAULT 0.00,
-    payment_method VARCHAR(50) NOT NULL DEFAULT 'cash', -- cash, card, qr, split, credit
+    payment_method VARCHAR(50) NOT NULL DEFAULT 'cash',
     payment_details JSONB DEFAULT '{}'::jsonb,
     amount_tendered NUMERIC(12, 2) DEFAULT 0.00,
     change_amount NUMERIC(12, 2) DEFAULT 0.00,
-    status VARCHAR(20) DEFAULT 'completed', -- completed, refunded, void
+    status VARCHAR(20) DEFAULT 'completed',
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- 7. Sale Items (Line Items)
-CREATE TABLE IF NOT EXISTS sale_items (
+CREATE TABLE IF NOT EXISTS public.sale_items (
     id VARCHAR(50) PRIMARY KEY,
-    sale_id VARCHAR(50) REFERENCES sales(id) ON DELETE CASCADE,
-    product_id VARCHAR(50) REFERENCES products(id) ON DELETE SET NULL,
+    sale_id VARCHAR(50) REFERENCES public.sales(id) ON DELETE CASCADE,
+    product_id VARCHAR(50) REFERENCES public.products(id) ON DELETE SET NULL,
     product_name VARCHAR(200) NOT NULL,
     unit_price NUMERIC(12, 2) NOT NULL,
     quantity INTEGER NOT NULL DEFAULT 1,
@@ -116,10 +119,10 @@ CREATE TABLE IF NOT EXISTS sale_items (
 );
 
 -- 8. Stock Adjustments Audit Trail
-CREATE TABLE IF NOT EXISTS stock_adjustments (
+CREATE TABLE IF NOT EXISTS public.stock_adjustments (
     id VARCHAR(50) PRIMARY KEY,
-    product_id VARCHAR(50) REFERENCES products(id) ON DELETE CASCADE,
-    type VARCHAR(30) NOT NULL, -- restock, damage, expired, audit_correction, return
+    product_id VARCHAR(50) REFERENCES public.products(id) ON DELETE CASCADE,
+    type VARCHAR(30) NOT NULL,
     quantity_change INTEGER NOT NULL,
     previous_stock INTEGER NOT NULL,
     new_stock INTEGER NOT NULL,
@@ -129,7 +132,7 @@ CREATE TABLE IF NOT EXISTS stock_adjustments (
 );
 
 -- 9. Parked / Held Sales (Temporary carts)
-CREATE TABLE IF NOT EXISTS parked_sales (
+CREATE TABLE IF NOT EXISTS public.parked_sales (
     id VARCHAR(50) PRIMARY KEY,
     customer_note VARCHAR(150),
     items JSONB NOT NULL,
@@ -137,52 +140,52 @@ CREATE TABLE IF NOT EXISTS parked_sales (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Enable RLS and create permissive policies for anon access (configurable for auth later)
-ALTER TABLE business_settings ENABLE ROW LEVEL SECURITY;
-ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
-ALTER TABLE products ENABLE ROW LEVEL SECURITY;
-ALTER TABLE shifts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE cash_movements ENABLE ROW LEVEL SECURITY;
-ALTER TABLE sales ENABLE ROW LEVEL SECURITY;
-ALTER TABLE sale_items ENABLE ROW LEVEL SECURITY;
-ALTER TABLE stock_adjustments ENABLE ROW LEVEL SECURITY;
-ALTER TABLE parked_sales ENABLE ROW LEVEL SECURITY;
+-- Enable RLS on all tables
+ALTER TABLE public.business_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.shifts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.cash_movements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sale_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.stock_adjustments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.parked_sales ENABLE ROW LEVEL SECURITY;
 
 -- 10. Permissive RLS Policies for Anon / API Access
-DROP POLICY IF EXISTS "Allow public access business_settings" ON business_settings;
-CREATE POLICY "Allow public access business_settings" ON business_settings FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow public access business_settings" ON public.business_settings;
+CREATE POLICY "Allow public access business_settings" ON public.business_settings FOR ALL USING (true) WITH CHECK (true);
 
-DROP POLICY IF EXISTS "Allow public access categories" ON categories;
-CREATE POLICY "Allow public access categories" ON categories FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow public access categories" ON public.categories;
+CREATE POLICY "Allow public access categories" ON public.categories FOR ALL USING (true) WITH CHECK (true);
 
-DROP POLICY IF EXISTS "Allow public access products" ON products;
-CREATE POLICY "Allow public access products" ON products FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow public access products" ON public.products;
+CREATE POLICY "Allow public access products" ON public.products FOR ALL USING (true) WITH CHECK (true);
 
-DROP POLICY IF EXISTS "Allow public access shifts" ON shifts;
-CREATE POLICY "Allow public access shifts" ON shifts FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow public access shifts" ON public.shifts;
+CREATE POLICY "Allow public access shifts" ON public.shifts FOR ALL USING (true) WITH CHECK (true);
 
-DROP POLICY IF EXISTS "Allow public access cash_movements" ON cash_movements;
-CREATE POLICY "Allow public access cash_movements" ON cash_movements FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow public access cash_movements" ON public.cash_movements;
+CREATE POLICY "Allow public access cash_movements" ON public.cash_movements FOR ALL USING (true) WITH CHECK (true);
 
-DROP POLICY IF EXISTS "Allow public access sales" ON sales;
-CREATE POLICY "Allow public access sales" ON sales FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow public access sales" ON public.sales;
+CREATE POLICY "Allow public access sales" ON public.sales FOR ALL USING (true) WITH CHECK (true);
 
-DROP POLICY IF EXISTS "Allow public access sale_items" ON sale_items;
-CREATE POLICY "Allow public access sale_items" ON sale_items FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow public access sale_items" ON public.sale_items;
+CREATE POLICY "Allow public access sale_items" ON public.sale_items FOR ALL USING (true) WITH CHECK (true);
 
-DROP POLICY IF EXISTS "Allow public access stock_adjustments" ON stock_adjustments;
-CREATE POLICY "Allow public access stock_adjustments" ON stock_adjustments FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow public access stock_adjustments" ON public.stock_adjustments;
+CREATE POLICY "Allow public access stock_adjustments" ON public.stock_adjustments FOR ALL USING (true) WITH CHECK (true);
 
-DROP POLICY IF EXISTS "Allow public access parked_sales" ON parked_sales;
-CREATE POLICY "Allow public access parked_sales" ON parked_sales FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow public access parked_sales" ON public.parked_sales;
+CREATE POLICY "Allow public access parked_sales" ON public.parked_sales FOR ALL USING (true) WITH CHECK (true);
 
 -- Seed Initial Default Settings if empty
-INSERT INTO business_settings (id, business_name, tagline, business_type, tax_id, address, phone, currency_symbol, tax_rate, tax_inclusive)
+INSERT INTO public.business_settings (id, business_name, tagline, business_type, tax_id, address, phone, currency_symbol, tax_rate, tax_inclusive)
 VALUES ('default', 'Nexus Retail Store', 'Quality Essentials & General Goods', 'retail', 'TAX-889922-PH', '123 Commerce Avenue, City Center', '+1 555-0199', '$', 8.50, false)
 ON CONFLICT (id) DO NOTHING;
 
 -- Seed Initial Sample Categories
-INSERT INTO categories (id, name, color, icon, description) VALUES
+INSERT INTO public.categories (id, name, color, icon, description) VALUES
 ('cat_beverages', 'Beverages & Drinks', '#0d6efd', 'bi-cup-straw', 'Cold drinks, juices, soda, water'),
 ('cat_snacks', 'Snacks & Bakery', '#198754', 'bi-basket', 'Chips, cookies, bakery items'),
 ('cat_personal', 'Personal Care', '#6f42c1', 'bi-heart', 'Toiletries, skincare, hygiene'),
@@ -190,7 +193,7 @@ INSERT INTO categories (id, name, color, icon, description) VALUES
 ON CONFLICT (id) DO NOTHING;
 
 -- Seed Initial Products
-INSERT INTO products (id, name, barcode, sku, category_id, cost_price, selling_price, stock_quantity, min_stock_alert, dynamic_attributes) VALUES
+INSERT INTO public.products (id, name, barcode, sku, category_id, cost_price, selling_price, stock_quantity, min_stock_alert, dynamic_attributes) VALUES
 ('prod_1', 'Premium Arabica Coffee Beans (250g)', '890123450001', 'COF-ARA-250', 'cat_beverages', 4.50, 8.99, 45, 10, '{"Brand": "Mountain Roast", "Origin": "Highlands", "Expiry": "2027-06-30"}'::jsonb),
 ('prod_2', 'Organic Green Tea Box (20 bags)', '890123450002', 'TEA-GRN-020', 'cat_beverages', 2.00, 4.50, 32, 8, '{"Brand": "Zen Leaf", "Flavor": "Jasmine", "Expiry": "2027-12-31"}'::jsonb),
 ('prod_3', 'Artisan Dark Chocolate Bar 70%', '890123450003', 'CHO-DRK-070', 'cat_snacks', 1.80, 3.75, 55, 15, '{"Brand": "ChocoCraft", "Dietary": "Vegan", "Cocoa": "70%"}'::jsonb),
